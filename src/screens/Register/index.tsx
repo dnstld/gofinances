@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Modal } from 'react-native';
 import { Button } from '../../components/Forms/Button';
 import { CategorySelectButton } from '../../components/Forms/CategorySelectButton';
-import { Input } from '../../components/Forms/Input';
+import { InputForm } from '../../components/Forms/InputForm';
 import { TransactionTypeButton } from '../../components/Forms/TransactionTypeButton';
 import { CategorySelect } from '../CategorySelect';
 
@@ -15,6 +16,11 @@ import {
   TransactionsTypes
 } from './styles';
 
+interface FormData {
+  name: string;
+  amount: string;
+}
+
 export function Register() {
   const [category, setCategory] = useState({
     key: 'category',
@@ -23,12 +29,27 @@ export function Register() {
   const [transactionsType, setTransactionsType] = useState('');
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 
+  const {
+    control,
+    handleSubmit
+  } = useForm();
+
   function handleTransactionsTypeSelect(type: string) {
     setTransactionsType(type);
   }
 
   function handleSelectCategoryModal() {
     setCategoryModalOpen(!categoryModalOpen);
+  }
+
+  function handleRegister(form: FormData) {
+    const data = {
+      name: form.name,
+      amount: form.amount,
+      transactionsType,
+      category: category.key
+    }
+    console.log(data);
   }
 
   return (
@@ -39,10 +60,14 @@ export function Register() {
 
       <Form>
         <Fields>
-          <Input
+          <InputForm
+            name="name"
+            control={control}
             placeholder="Nome"
           />
-          <Input
+          <InputForm
+            name="amount"
+            control={control}
             placeholder="Preço"
           />
 
@@ -67,7 +92,7 @@ export function Register() {
           />
         </Fields>
 
-        <Button title="Enviar" />
+        <Button title="Enviar" onPress={handleSubmit(handleRegister)} />
       </Form>
 
       <Modal visible={categoryModalOpen}>
